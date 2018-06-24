@@ -1,4 +1,4 @@
-package cryptic/core/grid
+package core
 
 type Direction int
 
