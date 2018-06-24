@@ -1,6 +1,7 @@
 package cryptic/core/crossword
 
 import (
+	"time"
 	"cryptic/core/grid"
 )
 
@@ -16,6 +17,8 @@ type Clue struct {
 }
 
 type Crossword struct {
+	cruciverbalist string
+	publishedDate time
 	width, height int
 	clues []Clue
 	id int
@@ -24,5 +27,23 @@ type Crossword struct {
 type Solution {
 	id int
 	crosswordId int
-	inputLetters map[Coordinate]rune
+	inputChars map[Coordinate]rune
 }
+
+
+
+
+/////
+
+
+type GridSquare {
+	isInput bool
+	coordinate Coordinate
+	char rune
+	clueNumber int
+}
+
+func DeriveGrid (crossword Crossword, solution Solution) (grid [][]GridSquare) {
+	///////
+}
+
