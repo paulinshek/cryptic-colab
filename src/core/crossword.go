@@ -46,4 +46,3 @@ type GridSquare {
 func DeriveGrid (crossword Crossword, solution Solution) (grid [][]GridSquare) {
 	///////
 }
-
