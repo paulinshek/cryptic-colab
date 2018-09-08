@@ -40,8 +40,8 @@ run:
 # clear:
 #   @clear
 
-# clean:
-#   @echo "Cleaning"
-#   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
+clean:
+	@echo "Cleaning"
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
 
 # .PHONY: build get install run watch start stop restart clean
