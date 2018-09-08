@@ -29,12 +29,6 @@ type Solution struct {
 	InputChars map[Coordinate]rune
 }
 
-
-
-
-/////
-
-
 type GridSquare struct {
 	IsInput bool
 	Coordinate Coordinate
@@ -59,7 +53,6 @@ func DeriveGrid (crossword Crossword, solution Solution) (grid [][]GridSquare) {
     	grid = append(grid, gridRow)
 	}
  	return grid;
-
 }
 
 func getIsInputAtCoordinate (clues []Clue, coordinate Coordinate) (isInput bool) {
