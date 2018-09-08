@@ -3,7 +3,7 @@ package main
 import (
 	"internal/pkg/core"
 	"internal/pkg/dataaccess"
-	"fmt"
+	"internal/pkg/io"
 )
 
 func main() {
@@ -19,13 +19,11 @@ func main() {
 	}
 	mySolution.InputChars[core.Coordinate{0,0}] = 'c'
 
+	crosswordWriter, _ := io.GetCrosswordWriter()
+	err := crosswordWriter.Write(crossword, mySolution)
+	if (err != nil) {
+		
+	}
 
-	fmt.Println(crossword)
-	fmt.Println(mySolution)
-
-
-	grid := core.DeriveGrid(crossword, mySolution);
-
-	fmt.Println(grid)
 }
 
