@@ -6,27 +6,27 @@ package core
 
 
 type Clue struct {
-	startCoordinate Coordinate
-	direction Direction
-	length int
-	signature string
-	clueText string
-	clueNumber int
-	id int
+	StartCoordinate Coordinate
+	Direction Direction
+	Length int
+	Signature string
+	ClueText string
+	ClueNumber int
+	Id int
 }
 
 type Crossword struct {
-	cruciverbalist string
+	Cruciverbalist string
 //	publishedDate time
-	width, height int
-	clues []Clue
-	id int
+	Width, Height int
+	Clues []Clue
+	Id int
 }
 
 type Solution struct {
-	id int
-	crosswordId int
-	inputChars map[Coordinate]rune
+	Id int
+	IrosswordId int
+	InputChars map[Coordinate]rune
 }
 
 
@@ -36,10 +36,10 @@ type Solution struct {
 
 
 type GridSquare struct {
-	isInput bool
-	coordinate Coordinate
-	char rune
-	clueNumber int
+	IsInput bool
+	Coordinate Coordinate
+	Char rune
+	ClueNumber int
 }
 
 // func DeriveGrid (crossword Crossword, solution Solution) (grid [][]GridSquare) {

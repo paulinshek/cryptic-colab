@@ -8,5 +8,5 @@ const (
 )
 
 type Coordinate struct {
-	x, y int
+	X, Y int
 }

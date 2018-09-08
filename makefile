@@ -1,7 +1,7 @@
 
 GOPATH=$(shell pwd)/vendor:$(shell pwd)
 GOBIN=$(shell pwd)/bin
-GOFILES=$(wildcard *.go)
+GOFILES=$(wildcard src/cmd/*.go)
 GONAME=$(shell basename "$(PWD)")
 PID=/tmp/go-$(GONAME).pid
 
