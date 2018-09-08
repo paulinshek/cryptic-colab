@@ -1,0 +1,10 @@
+We need:
+
+* A way of displaying output
+
+* A way of receiving user input
+
+* A way of managing crosswords
+
+* A Crossword repository
+

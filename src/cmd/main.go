@@ -16,37 +16,36 @@ func main() {
 		ClueNumber: 1,
 		Id: 1,
 	}
+	clue2 := core.Clue{
+		StartCoordinate: core.Coordinate{0,1},
+		Direction: core.Across,
+		Length: 3,
+		Signature: "3",
+		ClueText: "The answer is CAR",
+		ClueNumber: 2,
+		Id: 2,
+	}
+	crossword := core.Crossword{
+		Width: 3,
+		Height: 3,
+		Clues: []core.Clue{clue1, clue2},
+		Id: 1,
+	}
 
-	// clue1 := Clue {
-	// 	startCoordinate: crossword.Coordinate{0,0}
-	// 	direction: grid.Across
-	// 	length = 3
-	// 	signature = "3"
-	// 	clueText = "The answer is CAT"
-	// 	clueNumber = 1
-	// 	id = 1
-	// }
-	// clue2 := Clue{
-	// 	startCoordinate = crossword.Coordinate{0,1}
-	// 	direction = grid.Across
-	// 	length = 3
-	// 	signature = "3"
-	// 	clueText = "The answer is CAR"
-	// 	clueNumber = 2
-	// 	id = 2
-	// }
-	// crossword := Crossword{
-	// 	width = 3
-	// 	height = 3
-	// 	clues = []Clues{clue1, clue2}
-	// 	id = 1
-	// }
+	mySolution := core.Solution{
+		Id: 1,
+		CrosswordId: 1,
+		InputChars: map[core.Coordinate]rune{},
+	}
 
-	// mySolution := Solution{
-	// 	id = 1
-	// 	crosswordId = 1
-	// 	inputLetters = map[Coordinate]rune{}
-	// }
-	fmt.Println(clue1)
+	mySolution.InputChars[core.Coordinate{0,0}] = 'c'
+
+	fmt.Println(crossword)
+	fmt.Println(mySolution)
+
+
+	grid := core.DeriveGrid(crossword, mySolution);
+
+	fmt.Println(grid)
 }
 
