@@ -6,10 +6,11 @@ import (
 	"strings"
 	"bytes"
 	"strconv"
+	"net/http"
 )
 
 type CrosswordWriter interface {
-    Write(crossword core.Crossword, solution core.Solution) (err error)
+    Write(crossword core.Crossword, solution core.Solution, out http.ResponseWriter) (err error)
 }
 
 func GetCrosswordWriter() (crosswordWriter CrosswordWriter, err error) {
@@ -20,7 +21,7 @@ func GetCrosswordWriter() (crosswordWriter CrosswordWriter, err error) {
 type ConsoleCrosswordWriter struct {
 }
 
-func (consoleCrosswordWriter  ConsoleCrosswordWriter) Write(crossword core.Crossword, solution core.Solution) (err error) {
+func (consoleCrosswordWriter  ConsoleCrosswordWriter) Write(crossword core.Crossword, solution core.Solution, out http.ResponseWriter) (err error) {
 	grid := core.DeriveGrid(crossword, solution)
 	
 	columnSeparator := "|"
@@ -79,7 +80,8 @@ func (consoleCrosswordWriter  ConsoleCrosswordWriter) Write(crossword core.Cross
 		buffer.WriteString(rowSeparator)
 	}
 
-	fmt.Println(buffer.String())
+	fmt.Println(buffer.String()) // log out to console
+	fmt.Fprintf(out, buffer.String()) //also write out to http response
 	return
 }
 

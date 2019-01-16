@@ -4,10 +4,25 @@ import (
 	"internal/pkg/core"
 	"internal/pkg/dataaccess"
 	"internal/pkg/io"
+	"net/http"
 )
 
 func main() {
+	h := http.NewServeMux()
+	crossword, solution := initialState()
 
+	h.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		crosswordWriter, _ := io.GetCrosswordWriter()
+		err := crosswordWriter.Write(crossword, solution, w)
+		if (err != nil) {
+			
+		}
+	})
+
+	http.ListenAndServe(":8080", h)
+}
+
+func initialState() (core.Crossword, core.Solution) {
 	crosswordRepository, _ := dataaccess.GetCrosswordRepository()
 	crossword, _ := crosswordRepository.Get(1)
 	
@@ -19,11 +34,6 @@ func main() {
 	}
 	mySolution.InputChars[core.Coordinate{0,0}] = 'c'
 
-	crosswordWriter, _ := io.GetCrosswordWriter()
-	err := crosswordWriter.Write(crossword, mySolution)
-	if (err != nil) {
-		
-	}
-
+	return crossword, mySolution
 }
 
