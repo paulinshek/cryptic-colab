@@ -2,51 +2,38 @@ package main
 
 import (
 	"internal/pkg/core"
-	"fmt"
+	"internal/pkg/dataaccess"
+	"internal/pkg/io"
+	"net/http"
 )
 
 func main() {
+	h := http.NewServeMux()
+	crossword, solution := initialState()
 
-	clue1 := core.Clue {
-		StartCoordinate: core.Coordinate{0,0},
-		Direction: core.Across,
-		Length: 3,
-		Signature: "3",
-		ClueText: "The answer is CAT",
-		ClueNumber: 1,
+	h.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		crosswordWriter, _ := io.GetCrosswordWriter()
+		err := crosswordWriter.Write(crossword, solution, w)
+		if (err != nil) {
+			
+		}
+	})
+
+	http.ListenAndServe(":8080", h)
+}
+
+func initialState() (core.Crossword, core.Solution) {
+	crosswordRepository, _ := dataaccess.GetCrosswordRepository()
+	crossword, _ := crosswordRepository.Get(1)
+	
+
+	mySolution := core.Solution {
 		Id: 1,
+		CrosswordId: crossword.Id,
+		InputChars: make(map[core.Coordinate]rune),
 	}
+	mySolution.InputChars[core.Coordinate{0,0}] = 'c'
 
-	// clue1 := Clue {
-	// 	startCoordinate: crossword.Coordinate{0,0}
-	// 	direction: grid.Across
-	// 	length = 3
-	// 	signature = "3"
-	// 	clueText = "The answer is CAT"
-	// 	clueNumber = 1
-	// 	id = 1
-	// }
-	// clue2 := Clue{
-	// 	startCoordinate = crossword.Coordinate{0,1}
-	// 	direction = grid.Across
-	// 	length = 3
-	// 	signature = "3"
-	// 	clueText = "The answer is CAR"
-	// 	clueNumber = 2
-	// 	id = 2
-	// }
-	// crossword := Crossword{
-	// 	width = 3
-	// 	height = 3
-	// 	clues = []Clues{clue1, clue2}
-	// 	id = 1
-	// }
-
-	// mySolution := Solution{
-	// 	id = 1
-	// 	crosswordId = 1
-	// 	inputLetters = map[Coordinate]rune{}
-	// }
-	fmt.Println(clue1)
+	return crossword, mySolution
 }
 

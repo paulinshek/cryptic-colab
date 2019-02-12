@@ -20,9 +20,11 @@ README.md
 
 ### Make commands
 
-* make build - builds the project into a binary file
-* make run - runs the project
-* make clean - cleans the project
+* `make clean` - cleans the project
+* `make build` - builds the project into a binary file
+* `make run` - runs the project
+
+Then navigate to localhost:8080
 
 
 

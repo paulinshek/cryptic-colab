@@ -9,8 +9,6 @@ PID=/tmp/go-$(GONAME).pid
 
 
 build:
-	@echo "gopath -> $(GOPATH)"
-	@echo "gofiles -> $(GOFILES)"
 	@echo "Building $(GOFILES) to ./bin"
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go build -o bin/$(GONAME) $(GOFILES)
 
