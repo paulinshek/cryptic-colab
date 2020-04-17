@@ -3,9 +3,8 @@
 *.exe~
 *.dll
 *.so
-*.dylib
-/bin/*
 bin/*
+vendor/*
 
 # Generated files
 /pkg/
