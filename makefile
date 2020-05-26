@@ -1,16 +1,17 @@
 
 GOPATH=$(shell pwd)/vendor:$(shell pwd)
 GOBIN=$(shell pwd)/bin
-GOFILES=$(wildcard src/cmd/*.go)
+GOFILES=$(wildcard cmd/*.go)
 GONAME=$(shell basename "$(PWD)")
 PID=/tmp/go-$(GONAME).pid
 
 
-
+test:
+	@echo $(GOPATH)
 
 build:
 	@echo "Building $(GOFILES) to ./bin"
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go build -o bin/$(GONAME) $(GOFILES)
+	@GOBIN=$(GOBIN) go build -mod=mod -o bin/$(GONAME) $(GOFILES) 
 
 # get:
 #   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get .
@@ -19,7 +20,7 @@ install:
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go install $(GOFILES)
 
 run:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run $(GOFILES)
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run -mod=mod $(GOFILES)
 
 # watch:
 #   @$(MAKE) restart &
