@@ -15,6 +15,7 @@ Go v.1.14.2
 /internal
 	/pkg <- will contain any internal packages (for use only within this project)
 /pkg <- will contain any non-internal packages (for use within and without of this project)]
+/web <- the front-end lives here
 makefile
 README.md
 ```
