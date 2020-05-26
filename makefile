@@ -11,7 +11,7 @@ test:
 
 build:
 	@echo "Building $(GOFILES) to ./bin"
-	@GOBIN=$(GOBIN) go build -o bin/$(GONAME) $(GOFILES)
+	@GOBIN=$(GOBIN) go build -mod=mod -o bin/$(GONAME) $(GOFILES) 
 
 # get:
 #   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get .
@@ -20,7 +20,7 @@ install:
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go install $(GOFILES)
 
 run:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run $(GOFILES)
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go run -mod=mod $(GOFILES)
 
 # watch:
 #   @$(MAKE) restart &

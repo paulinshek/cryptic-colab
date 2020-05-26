@@ -2,9 +2,14 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"log"
+	"encoding/json"
 	"net/http"
+
 	"github.com/gorilla/mux"
+
+	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 )
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
@@ -14,36 +19,36 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
+
+	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
+	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
-// func main() {
-// 	h := http.NewServeMux()
-// 	crossword, solution := initialState()
+func getCrossword(writer http.ResponseWriter, request *http.Request) {
 
-// 	h.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-// 		crosswordWriter, _ := io.GetCrosswordWriter()
-// 		err := crosswordWriter.Write(crossword, solution, w)
-// 		if (err != nil) {
-			
-// 		}
-// 	})
+	var err error
 
-// 	http.ListenAndServe(":8080", h)
-// }
+	crosswordRepository, _ := dataaccess.GetCrosswordRepository()
+	crosswordIdString := mux.Vars(request)["id"]
+	crosswordId, err := strconv.Atoi(crosswordIdString)
 
-// func initialState() (core.Crossword, core.Solution) {
-// 	crosswordRepository, _ := dataaccess.GetCrosswordRepository()
-// 	crossword, _ := crosswordRepository.Get(1)
+	if err != nil {
+		fmt.Fprintf(writer, "Please provide a valid crossword id")
+	} else {
+		crossword, err := crosswordRepository.Get(crosswordId)
+		if err != nil {
+			fmt.Fprintf(writer, "No crossword exists with the provided id %s", crosswordId)
+		} else {
+			json.NewEncoder(writer).Encode(crossword)
+		}
+	}
 	
+}
 
-// 	mySolution := core.Solution {
-// 		Id: 1,
-// 		CrosswordId: crossword.Id,
-// 		InputChars: make(map[core.Coordinate]rune),
-// 	}
-// 	mySolution.InputChars[core.Coordinate{0,0}] = 'c'
-
-// 	return crossword, mySolution
-// }
+func getCrosswordGrid(writer http.ResponseWriter, request *http.Request) {
+	fmt.Fprintf(writer, "Not implemented")
+	
+}
 
