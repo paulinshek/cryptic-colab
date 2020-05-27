@@ -21,9 +21,10 @@ export default function App() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/crossword">
-            <ViewCrosswordScene />
-          </Route>
+          <Route
+            path="/crossword/:crosswordId"
+            render={(props) => <ViewCrosswordScene {...props} />}
+          />
           <Route path="/">
             <Home />
           </Route>
