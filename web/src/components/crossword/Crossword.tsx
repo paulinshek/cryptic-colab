@@ -16,7 +16,6 @@ type Props = {
 const Crossword: FunctionComponent<Props> = ({ crosswordId }): JSX.Element => {
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("dispatching");
     dispatch(requestGetCrossword(crosswordId));
   }, []);
 

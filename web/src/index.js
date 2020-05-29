@@ -10,13 +10,13 @@ import configureStore from "./configureStore";
 
 import "./styles/tailwind.css";
 
-// const history = createBrowserHistory();
+const history = createBrowserHistory();
 
-// const initialState = window.INITIAL_REDUX_STATE;
-// const store = configureStore(history, initialState);
+const initialState = window.INITIAL_REDUX_STATE;
+const store = configureStore(history, initialState);
 
 ReactDOM.render(
-  <Provider store={configureStore()}>
+  <Provider store={store}>
     <React.StrictMode>
       <App />
     </React.StrictMode>
