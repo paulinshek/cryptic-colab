@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
@@ -23,7 +24,12 @@ func main() {
 	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
 	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+
+	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
 
 func getCrossword(writer http.ResponseWriter, request *http.Request) {

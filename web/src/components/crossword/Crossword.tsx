@@ -1,10 +1,5 @@
-import React, {
-  FunctionComponent,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { FunctionComponent, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 import { requestGetCrossword } from "./../../store/crossword/crosswordActions";
 import CrosswordMetaData from "./CrosswordMetadata";
