@@ -1,14 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"strconv"
-	"log"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 )
@@ -17,7 +19,14 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
 }
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
+
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
 
@@ -25,9 +34,8 @@ func main() {
 	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
+	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ROUTER_ALLOWED_ORIGINS")})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
 
 	log.Fatal(http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
@@ -50,11 +58,10 @@ func getCrossword(writer http.ResponseWriter, request *http.Request) {
 			json.NewEncoder(writer).Encode(crossword)
 		}
 	}
-	
+
 }
 
 func getCrosswordGrid(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, "Not implemented")
-	
-}
 
+}
