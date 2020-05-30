@@ -1,8 +1,11 @@
-import { takeEvery } from "redux-saga/effects";
+import { takeEvery, call, put } from "redux-saga/effects";
 
 import { PayloadAction } from "typesafe-actions";
+import axios from "axios";
 
 import { CrosswordActionTypes } from "./crosswordTypes";
+import { getCrosswordSuccess, getCrosswordFailure } from "./crosswordActions";
+import Crossword from "../../components/crossword/Crossword";
 
 function* getCrossword(
   action: PayloadAction<
@@ -12,13 +15,17 @@ function* getCrossword(
     }
   >
 ) {
-  console.log("attempting to get crossword", action);
+  const url =
+    process.env.REACT_APP_API_URL +
+    "getcrossword/" +
+    action.payload.crosswordId;
 
-  const json = yield fetch(
-    process.env.REACT_APP_API_URL + "getcrossword/" + action.payload.crosswordId
-  ).then((response) => response.json());
-
-  console.log(json);
+  try {
+    const response = yield call(() => axios.get(url));
+    yield put(getCrosswordSuccess(response.data));
+  } catch (error) {
+    yield put(getCrosswordFailure(error));
+  }
 }
 
 export default function* () {
