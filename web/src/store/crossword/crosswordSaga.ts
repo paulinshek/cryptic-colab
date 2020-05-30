@@ -15,7 +15,7 @@ function* getCrossword(
   console.log("attempting to get crossword", action);
 
   const json = yield fetch(
-    "http://localhost:8080/getcrossword/" + action.payload.crosswordId
+    process.env.REACT_APP_API_URL + "getcrossword/" + action.payload.crosswordId
   ).then((response) => response.json());
 
   console.log(json);
