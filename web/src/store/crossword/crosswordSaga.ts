@@ -5,7 +5,6 @@ import axios from "axios";
 
 import { CrosswordActionTypes } from "./crosswordTypes";
 import { getCrosswordSuccess, getCrosswordFailure } from "./crosswordActions";
-import Crossword from "../../components/crossword/Crossword";
 
 function* getCrossword(
   action: PayloadAction<

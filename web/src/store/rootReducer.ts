@@ -1,8 +1,9 @@
 import { combineReducers } from "redux";
 
 import crosswordReducer from "./crossword/crosswordReducer";
+import { RootState } from "./rootTypes";
 
-const rootReducer = combineReducers<Root.ApplicationState>({
+const rootReducer = combineReducers<RootState>({
   crossword: crosswordReducer,
 });
 

@@ -1,5 +1,5 @@
 export interface CrosswordState {
-  [key: string]: any;
+  crosswords: Crossword[];
 }
 
 export enum CrosswordActionTypes {

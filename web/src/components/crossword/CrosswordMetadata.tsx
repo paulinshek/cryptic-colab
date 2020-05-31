@@ -6,16 +6,23 @@ import React, {
 } from "react";
 import { useSelector } from "react-redux";
 
+import { Crossword } from "./../../store/crossword/crosswordTypes";
+
 type Props = {
-  //   crosswordId: string;
+  crossword: Crossword;
 };
 
-const CrosswordMetadata: FunctionComponent<Props> = (
-  {
-    //   crosswordId,
-  }
-): JSX.Element => {
-  return <div className="">crossword metadata goes here</div>;
+const CrosswordMetadata: FunctionComponent<Props> = ({
+  crossword,
+}): JSX.Element => {
+  console.log(crossword);
+
+  return (
+    <div className="">
+      <p>Crossword {crossword.Id}</p>
+      <p>Written by {crossword.Cruciverbalist}</p>
+    </div>
+  );
 };
 
 export default CrosswordMetadata;

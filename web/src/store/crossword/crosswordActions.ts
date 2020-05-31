@@ -2,7 +2,7 @@ import { action } from "typesafe-actions";
 
 import { CrosswordActionTypes, Crossword } from "./crosswordTypes";
 
-export const requestGetCrossword = (crosswordId: string) => {
+export const requestGetCrossword = (crosswordId: number) => {
   return action(CrosswordActionTypes.REQUEST_GET_CROSSWORD, { crosswordId });
 };
 

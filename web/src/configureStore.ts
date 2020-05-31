@@ -4,13 +4,14 @@ import { connectRouter, routerMiddleware } from "connected-react-router";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { History } from "history";
 
+import { RootState } from "./store/rootTypes";
 import rootReducer from "./store/rootReducer";
 import rootSaga from "./store/rootSaga";
 
 export default function configureStore(
   history: History,
-  initialState: Root.ApplicationState
-): Store<Root.ApplicationState> {
+  initialState: RootState
+): Store<RootState> {
   const composeEnhancers = composeWithDevTools({});
   const sagaMiddleware = createSagaMiddleware();
 
