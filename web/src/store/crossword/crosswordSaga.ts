@@ -21,8 +21,10 @@ function* getCrossword(
 
   try {
     const response = yield call(() => axios.get(url));
+    console.log(response.data);
     yield put(getCrosswordSuccess(response.data));
   } catch (error) {
+    console.log(error);
     yield put(getCrosswordFailure(error));
   }
 }

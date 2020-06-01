@@ -23,8 +23,16 @@ export interface CrosswordClue {
   Id: number;
   Length: number;
   Signature: string;
-  StartCoordinate: {
-    X: number;
-    Y: number;
-  };
+  StartCoordinate: Coordinate;
+}
+export interface GridSquare {
+  isInput: boolean;
+  coordinate: Coordinate;
+  char: string | null;
+  clueNumber: number | null;
+}
+
+export interface Coordinate {
+  X: number;
+  Y: number;
 }

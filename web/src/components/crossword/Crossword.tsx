@@ -6,6 +6,7 @@ import { find, propEq } from "ramda";
 import { RootState } from "../../store/rootTypes";
 import { requestGetCrossword } from "./../../store/crossword/crosswordActions";
 import CrosswordMetaData from "./CrosswordMetadata";
+import CrosswordGrid from "./CrosswordGrid";
 
 import { Crossword as CrosswordType } from "./../../store/crossword/crosswordTypes";
 
@@ -33,6 +34,7 @@ const Crossword: FunctionComponent<Props> = ({ crosswordId }): JSX.Element => {
       {crossword ? (
         <div>
           <CrosswordMetaData crossword={crossword} />
+          <CrosswordGrid crossword={crossword} />
         </div>
       ) : (
         <p>no crossword yet</p>

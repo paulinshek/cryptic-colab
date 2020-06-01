@@ -15,12 +15,12 @@ type Props = {
 const CrosswordMetadata: FunctionComponent<Props> = ({
   crossword,
 }): JSX.Element => {
-  console.log(crossword);
-
   return (
     <div className="">
-      <p>Crossword {crossword.Id}</p>
-      <p>Written by {crossword.Cruciverbalist}</p>
+      <p className="font-serif text-2xl font-bold">Crossword {crossword.Id}</p>
+      <p className="text-xl">
+        Written by <span className="font-bold">{crossword.Cruciverbalist}</span>
+      </p>
     </div>
   );
 };
