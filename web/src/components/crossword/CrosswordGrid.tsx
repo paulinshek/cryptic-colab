@@ -1,12 +1,30 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-import crosswordGridUtilities from "./../../utilities/crosswordGridUtilities";
+import crosswordGridService from "../../services/crosswordGridService";
 import { Crossword, GridSquare } from "./../../store/crossword/crosswordTypes";
 import CrosswordGridSquare from "./CrosswordGridSquare";
 
 type Props = {
   crossword: Crossword;
+};
+
+const renderGridRow = (gridRow: GridSquare[], key: any) => {
+  return (
+    <div key={key} className="crossword-grid-row">
+      {gridRow.map((gridSquare, index) => renderGridSquare(gridSquare, index))}
+    </div>
+  );
+};
+
+const renderGridSquare = (gridSquare: GridSquare, key: any) => {
+  return (
+    <CrosswordGridSquare
+      isInput={gridSquare.isInput}
+      clueNumber={gridSquare.clueNumber}
+      key={key}
+    />
+  );
 };
 
 const CrosswordGrid: FunctionComponent<Props> = ({
@@ -15,26 +33,12 @@ const CrosswordGrid: FunctionComponent<Props> = ({
   const [grid, setGrid] = useState<GridSquare[][]>([]);
 
   useEffect(() => {
-    setGrid(crosswordGridUtilities.deriveGrid(crossword));
+    setGrid(crosswordGridService.deriveGrid(crossword));
   }, [crossword, setGrid]);
 
   return (
-    <div className="">
-      {grid.map((gridRow, index) => {
-        return (
-          <div key={index}>
-            {gridRow.map((gridSquare) => {
-              return (
-                <CrosswordGridSquare
-                  isInput={gridSquare.isInput}
-                  clueNumber={gridSquare.clueNumber}
-                  dimension={20}
-                />
-              );
-            })}
-          </div>
-        );
-      })}
+    <div className="crossword-grid" style={{ maxWidth: 40 * crossword.Width }}>
+      {grid.map((gridRow, index) => renderGridRow(gridRow, index))}
     </div>
   );
 };

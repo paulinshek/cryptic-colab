@@ -17864,6 +17864,39 @@ video {
   transition-delay: 1000ms;
 }
 
+.crossword-grid {
+  border-width: 1px;
+  --border-opacity: 1;
+  border-color: #000;
+  border-color: rgba(0, 0, 0, var(--border-opacity));
+  width: 100%;
+}
+
+.crossword-grid-row {
+  display: flex;
+  width: 100%;
+}
+
+.crossword-grid-square {
+  flex: 1 1 0%;
+  border-width: 1px;
+  --border-opacity: 1;
+  border-color: #000;
+  border-color: rgba(0, 0, 0, var(--border-opacity));
+  position: relative;
+}
+
+.crossword-grid-square-background {
+  padding-bottom: 100%;
+  width: 100%;
+}
+
+.crossword-clue-number {
+  font-size: 0.75rem;
+  line-height: 1.25;
+  position: absolute;
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not(template) ~ :not(template) {
     --space-y-reverse: 0;

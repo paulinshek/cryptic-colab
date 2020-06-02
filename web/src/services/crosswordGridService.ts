@@ -1,11 +1,14 @@
+import { equals } from "ramda";
+
 import {
   Crossword,
   GridSquare,
   CrosswordClue,
   Coordinate,
+  ClueDirection,
 } from "../store/crossword/crosswordTypes";
 
-export default class crosswordGridUtilities {
+export default class crosswordGridService {
   static deriveGrid(crossword: Crossword): GridSquare[][] {
     const grid: GridSquare[][] = [];
 
@@ -28,6 +31,7 @@ export default class crosswordGridUtilities {
       }
       grid.push(gridRow);
     }
+
     return grid;
   }
 
@@ -35,11 +39,12 @@ export default class crosswordGridUtilities {
     clues: CrosswordClue[],
     coordinate: Coordinate
   ): number | null {
-    clues.forEach((clue) => {
-      if (clue.StartCoordinate == coordinate) {
+    for (let i = 0; i < clues.length; i++) {
+      const clue = clues[i];
+      if (equals(clue.StartCoordinate, coordinate)) {
         return clue.ClueNumber;
       }
-    });
+    }
 
     return null;
   }
@@ -48,26 +53,28 @@ export default class crosswordGridUtilities {
     clues: CrosswordClue[],
     coordinate: Coordinate
   ): boolean {
-    clues.forEach((clue) => {
-      if (clue.StartCoordinate == coordinate) {
+    for (let i = 0; i < clues.length; i++) {
+      const clue = clues[i];
+      if (equals(clue.StartCoordinate, coordinate)) {
         return true;
+      } else if (clue.Direction === ClueDirection.ACROSS) {
+        if (
+          coordinate.Y == clue.StartCoordinate.Y &&
+          coordinate.X >= clue.StartCoordinate.X &&
+          coordinate.X <= clue.StartCoordinate.X + clue.Length - 1
+        ) {
+          return true;
+        }
+      } else {
+        if (
+          coordinate.X == clue.StartCoordinate.X &&
+          coordinate.Y >= clue.StartCoordinate.Y &&
+          coordinate.Y <= clue.StartCoordinate.Y + clue.Length - 1
+        ) {
+          return true;
+        }
       }
-      // else if (clue.direction == Across) {
-      // 	if (coordinate.Y == clue.StartCoordinate.Y) &&
-      // 		(coordinate.X >= clue.StartCoordinate.X) &&
-      // 		(coordinate.X <= (clue.StartCoordinate.X + clue.Length - 1)) {
-      // 		isInput = true
-      // 		return
-      // 	}
-      // } else {
-      // 	if (coordinate.X == clue.StartCoordinate.X) &&
-      // 		(coordinate.Y >= clue.StartCoordinate.Y) &&
-      // 		(coordinate.Y <= (clue.StartCoordinate.Y + clue.Length - 1)) {
-      // 		isInput = true
-      // 		return
-      // 	}
-      // }
-    });
+    }
 
     return false;
   }

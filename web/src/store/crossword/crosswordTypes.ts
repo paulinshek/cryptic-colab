@@ -8,6 +8,10 @@ export enum CrosswordActionTypes {
   GET_CROSSWORD_FAILURE = "crossword/GET_CROSSWORD_FAILURE",
 }
 
+export enum ClueDirection {
+  DOWN = 0,
+  ACROSS = 1,
+}
 export interface Crossword {
   Clues: CrosswordClue[];
   Cruciverbalist: string;
@@ -19,7 +23,7 @@ export interface Crossword {
 export interface CrosswordClue {
   ClueNumber: number;
   ClueText: string;
-  Direction: number;
+  Direction: ClueDirection;
   Id: number;
   Length: number;
   Signature: string;
