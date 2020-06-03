@@ -1,0 +1,46 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+.crossword-grid {
+  @apply border;
+  @apply border-black;
+
+  width: 100%;
+}
+
+.crossword-grid-row {
+  @apply flex;
+
+  width: 100%;
+}
+
+.crossword-grid-square {
+  @apply flex-1;
+  @apply border;
+  @apply border-black;
+
+  position: relative;
+}
+
+.crossword-grid-square-background {
+  padding-bottom: 100%;
+  width: 100%;
+}
+
+.crossword-clue-number {
+  @apply text-xs;
+  @apply leading-tight;
+
+  position: absolute;
+}
+
+.crossword-body-container {
+  @apply flex;
+}
+
+.crossword-body-container > *:not(:last-child) {
+  margin-right: 1rem;
+}
