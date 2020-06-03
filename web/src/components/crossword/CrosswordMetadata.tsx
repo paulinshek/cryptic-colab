@@ -17,8 +17,8 @@ const CrosswordMetadata: FunctionComponent<Props> = ({
 }): JSX.Element => {
   return (
     <div className="">
-      <p className="font-serif text-2xl font-bold">Crossword {crossword.Id}</p>
-      <p className="text-xl">
+      <p className="text-2xl font-bold">Crossword {crossword.Id}</p>
+      <p className="text-l">
         Written by <span className="font-bold">{crossword.Cruciverbalist}</span>
       </p>
     </div>

@@ -17897,6 +17897,14 @@ video {
   position: absolute;
 }
 
+.crossword-body-container {
+  display: flex;
+}
+
+.crossword-body-container > *:not(:last-child) {
+  margin-right: 1rem;
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not(template) ~ :not(template) {
     --space-y-reverse: 0;

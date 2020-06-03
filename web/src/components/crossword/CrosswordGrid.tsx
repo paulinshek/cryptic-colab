@@ -9,7 +9,7 @@ type Props = {
   crossword: Crossword;
 };
 
-const renderGridRow = (gridRow: GridSquare[], key: any) => {
+const renderGridRow = (gridRow: GridSquare[], key: any): JSX.Element => {
   return (
     <div key={key} className="crossword-grid-row">
       {gridRow.map((gridSquare, index) => renderGridSquare(gridSquare, index))}
@@ -17,7 +17,7 @@ const renderGridRow = (gridRow: GridSquare[], key: any) => {
   );
 };
 
-const renderGridSquare = (gridSquare: GridSquare, key: any) => {
+const renderGridSquare = (gridSquare: GridSquare, key: any): JSX.Element => {
   return (
     <CrosswordGridSquare
       isInput={gridSquare.isInput}

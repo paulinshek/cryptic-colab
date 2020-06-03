@@ -36,3 +36,11 @@
 
   position: absolute;
 }
+
+.crossword-body-container {
+  @apply flex;
+}
+
+.crossword-body-container > *:not(:last-child) {
+  margin-right: 1rem;
+}
