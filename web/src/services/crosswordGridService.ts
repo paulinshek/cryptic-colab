@@ -12,9 +12,9 @@ export default class crosswordGridService {
   static deriveGrid(crossword: Crossword): GridSquare[][] {
     const grid: GridSquare[][] = [];
 
-    for (let i = 0; i < crossword.Height; i++) {
+    for (let i = 1; i <= crossword.Height; i++) {
       const gridRow: GridSquare[] = [];
-      for (let j = 0; j < crossword.Width; j++) {
+      for (let j = 1; j <= crossword.Width; j++) {
         const coordinate = { X: j, Y: i };
 
         const gridSquare = {
