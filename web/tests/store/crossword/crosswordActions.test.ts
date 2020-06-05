@@ -6,8 +6,6 @@ import {
 } from "./../../../src/store/crossword/crosswordTypes";
 import {requestGetCrossword, getCrosswordSuccess, getCrosswordFailure} from "./../../../src/store/crossword/crosswordActions"
 
-
-
 describe("crosswordActions", () => {
     describe("requestGetCrossword", () => {
         it("returns an action of type REQUEST_GET_CROSSWORD with a payload containing the provided crossword id", () => {
