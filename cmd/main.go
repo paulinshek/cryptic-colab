@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gorilla/handlers"
@@ -15,23 +16,47 @@ import (
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 )
 
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
-}
-
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
 }
 
+type webHandler struct {
+	staticPath string
+	indexPath  string
+}
+
+func (h webHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path, err := filepath.Abs(r.URL.Path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	path = filepath.Join(h.staticPath, path)
+
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
+		http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
+}
+
 func main() {
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
 
-	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
-	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
+	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+
+	webApp := webHandler{staticPath: "web/build", indexPath: "index.html"}
+	router.PathPrefix("/").Handler(webApp)
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ROUTER_ALLOWED_ORIGINS")})
