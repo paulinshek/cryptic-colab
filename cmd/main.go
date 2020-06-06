@@ -17,6 +17,7 @@ import (
 )
 
 func init() {
+	log.Print("Initialising")
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
@@ -49,6 +50,7 @@ func (h webHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	log.Print("Starting main")
 
 	router := mux.NewRouter().StrictSlash(true)
 

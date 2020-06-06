@@ -13,6 +13,11 @@ build:
 	@echo "Building $(GOFILES) to ./bin"
 	@GOBIN=$(GOBIN) go build -mod=mod -o bin/$(GONAME) $(GOFILES) 
 
+buildaws:
+	@GOBIN=$(GOBIN) GOARCH=amd64 GOOS=linux go build -mod=mod -o bin/application $(GOFILES) 
+	-rm ebUpload.zip
+	zip -r bin/ebUpload.zip bin/application web/build
+
 # get:
 #   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get .
 
