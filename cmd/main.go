@@ -1,19 +1,30 @@
 package main
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 )
+
+var conf *oauth2.Config
+var state string
+var store = sessions.NewCookieStore([]byte("tempsessionkey"))
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome home!")
@@ -22,6 +33,17 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
+	} else {
+
+		conf = &oauth2.Config{
+			ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
+			ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
+			RedirectURL:  "http://127.0.0.1:8080/auth",
+			Scopes: []string{
+				"https://www.googleapis.com/auth/userinfo.email", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
+			},
+			Endpoint: google.Endpoint,
+		}
 	}
 }
 
@@ -32,6 +54,9 @@ func main() {
 
 	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
 	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+
+	router.HandleFunc("/login", loginHandler).Methods("GET")
+	router.HandleFunc("/auth", authHandler).Methods("GET")
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ROUTER_ALLOWED_ORIGINS")})
@@ -64,4 +89,103 @@ func getCrossword(writer http.ResponseWriter, request *http.Request) {
 func getCrosswordGrid(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, "Not implemented")
 
+}
+
+// User is a retrieved and authentiacted user.
+type User struct {
+	Sub           string `json:"sub"`
+	Name          string `json:"name"`
+	GivenName     string `json:"given_name"`
+	FamilyName    string `json:"family_name"`
+	Profile       string `json:"profile"`
+	Picture       string `json:"picture"`
+	Email         string `json:"email"`
+	EmailVerified string `json:"email_verified"`
+	Gender        string `json:"gender"`
+}
+
+func randToken() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
+}
+
+func getLoginURL(state string) string {
+	return conf.AuthCodeURL(state)
+}
+
+func authHandler(writer http.ResponseWriter, request *http.Request) {
+
+	query := request.URL.Query()
+
+	session, _ := store.Get(request, "auth-name")
+	state = session.Values["state"]
+
+	if state != query["state"] {
+		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
+		return
+	}
+
+	token, err := conf.Exchange(oauth2.NoContext, query["code"])
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	client := conf.Client(oauth2.NoContext, token)
+	email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	defer email.Body.Close()
+	data, _ := ioutil.ReadAll(email.Body)
+	log.Println("Email body: ", string(data))
+	c.Status(http.StatusOK)
+
+	// session.Values[42] = 43
+	// // Save it before we write to the response/return from the handler.
+	// err = session.Save(r, w)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// Handle the exchange code to initiate a transport.
+	// session := sessions.Default(c)
+	// retrievedState := session.Get("state")
+	// if retrievedState != c.Query("state") {
+	//     c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", retrievedState))
+	//     return
+	// }
+
+	// tok, err := conf.Exchange(oauth2.NoContext, c.Query("code"))
+	// if err != nil {
+	// 	c.AbortWithError(http.StatusBadRequest, err)
+	//     return
+	// }
+
+	// client := conf.Client(oauth2.NoContext, tok)
+	// email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	// if err != nil {
+	// 	c.AbortWithError(http.StatusBadRequest, err)
+	//     return
+	// }
+	// defer email.Body.Close()
+	// data, _ := ioutil.ReadAll(email.Body)
+	// log.Println("Email body: ", string(data))
+	// c.Status(http.StatusOK)
+}
+
+func loginHandler(writer http.ResponseWriter, request *http.Request) {
+	state = randToken()
+	session, _ := store.Get(request, "auth-name")
+	session.Values["state"] = state
+	err := session.Save(request, writer)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writer.Write([]byte("<html><title>Golang Google</title> <body> <a href='" + getLoginURL(state) + "'><button>Login with Google!</button> </a> </body></html>"))
 }
