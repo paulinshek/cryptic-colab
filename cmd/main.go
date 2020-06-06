@@ -45,6 +45,13 @@ func init() {
 			Endpoint: google.Endpoint,
 		}
 	}
+
+	store.Options = &sessions.Options{
+		Domain:   "localhost/",
+		Path:     "/",
+		MaxAge:   3600 * 8, // 8 hours
+		HttpOnly: true,
+	}
 }
 
 func main() {
@@ -119,73 +126,45 @@ func authHandler(writer http.ResponseWriter, request *http.Request) {
 	query := request.URL.Query()
 
 	session, _ := store.Get(request, "auth-name")
-	state = session.Values["state"]
+	flashes := session.Flashes()
+	state := flashes[0].(string)
 
-	if state != query["state"] {
-		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
+	if state != query["state"][0] {
+		//c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
 		return
 	}
 
-	token, err := conf.Exchange(oauth2.NoContext, query["code"])
+	token, err := conf.Exchange(oauth2.NoContext, query["code"][0])
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		//c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	client := conf.Client(oauth2.NoContext, token)
 	email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		//c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
 	log.Println("Email body: ", string(data))
-	c.Status(http.StatusOK)
-
-	// session.Values[42] = 43
-	// // Save it before we write to the response/return from the handler.
-	// err = session.Save(r, w)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
-
-	// Handle the exchange code to initiate a transport.
-	// session := sessions.Default(c)
-	// retrievedState := session.Get("state")
-	// if retrievedState != c.Query("state") {
-	//     c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", retrievedState))
-	//     return
-	// }
-
-	// tok, err := conf.Exchange(oauth2.NoContext, c.Query("code"))
-	// if err != nil {
-	// 	c.AbortWithError(http.StatusBadRequest, err)
-	//     return
-	// }
-
-	// client := conf.Client(oauth2.NoContext, tok)
-	// email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-	// if err != nil {
-	// 	c.AbortWithError(http.StatusBadRequest, err)
-	//     return
-	// }
-	// defer email.Body.Close()
-	// data, _ := ioutil.ReadAll(email.Body)
-	// log.Println("Email body: ", string(data))
-	// c.Status(http.StatusOK)
+	//c.Status(http.StatusOK)
+	return
 }
 
 func loginHandler(writer http.ResponseWriter, request *http.Request) {
 	state = randToken()
 	session, _ := store.Get(request, "auth-name")
-	session.Values["state"] = state
+	session.Flashes()
+	session.AddFlash(state)
 	err := session.Save(request, writer)
 	if err != nil {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Printf("%+v\n", session)
 	writer.Write([]byte("<html><title>Golang Google</title> <body> <a href='" + getLoginURL(state) + "'><button>Login with Google!</button> </a> </body></html>"))
 }
