@@ -11,13 +11,13 @@ import (
 	"os"
 	"strconv"
 
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
+	"gopkg.in/matryer/respond.v1"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 	"github.com/paulinshek/cryptic-colab/internal/pkg/web"
@@ -35,7 +35,6 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	} else {
-
 		conf = &oauth2.Config{
 			ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
 			ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
@@ -62,12 +61,12 @@ func main() {
 
 	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
 	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+	router.HandleFunc("/api/getauthenticationurl", getAuthenticationUrl).Methods("GET")
+
+	router.HandleFunc("/auth", authHandler).Methods("GET")
 
 	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
 	router.PathPrefix("/").Handler(webApp)
-
-	router.HandleFunc("/login", loginHandler).Methods("GET")
-	router.HandleFunc("/auth", authHandler).Methods("GET")
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ROUTER_ALLOWED_ORIGINS")})
@@ -121,10 +120,6 @@ func randToken() string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func getLoginURL(state string) string {
-	return conf.AuthCodeURL(state)
-}
-
 func authHandler(writer http.ResponseWriter, request *http.Request) {
 
 	query := request.URL.Query()
@@ -158,17 +153,17 @@ func authHandler(writer http.ResponseWriter, request *http.Request) {
 	return
 }
 
-func loginHandler(writer http.ResponseWriter, request *http.Request) {
+func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
 	state = randToken()
 	session, _ := store.Get(request, "auth-name")
 	session.Flashes()
 	session.AddFlash(state)
 	err := session.Save(request, writer)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
-		return
+		respond.With(writer, request, http.StatusOK, err.Error())
+	else {
+		authenticationUrl := conf.AuthCodeURL(state)
+		respond.With(writer, request, http.StatusOK, authenticationUrl)
 	}
-
-	fmt.Printf("%+v\n", session)
-	writer.Write([]byte("<html><title>Golang Google</title> <body> <a href='" + getLoginURL(state) + "'><button>Login with Google!</button> </a> </body></html>"))
+	return
 }
