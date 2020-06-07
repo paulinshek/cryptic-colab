@@ -20,17 +20,15 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Build artifacts for deployment to AWS Elastic Beanstalk
-      uses: actions/setup-node@v1
+    - uses: actions/setup-node@v1
       with:
         node-version: '10.x'
-      uses: actions/setup-go@v2
+    - uses: actions/setup-go@v2
       with:
         go-version: '^1.14.2'
-      run: make buildaws
+    - run: make buildaws
 
-    - name: Deploy to AWS Elastic Beanstalk
-      uses: hmanzur/actions-aws-eb@v1.0.0
+    - uses: hmanzur/actions-aws-eb@v1.0.0
       with:
         command: 'deploy ${{ secrets.ENVIRONMENT_NAME }}'
       env:
