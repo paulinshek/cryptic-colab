@@ -20,6 +20,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
+	"github.com/paulinshek/cryptic-colab/internal/pkg/web"
 )
 
 var conf *oauth2.Config
@@ -55,12 +56,15 @@ func init() {
 }
 
 func main() {
+	log.Print("Starting main")
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
 
-	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
-	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
+	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+
+	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
+	router.PathPrefix("/").Handler(webApp)
 
 	router.HandleFunc("/login", loginHandler).Methods("GET")
 	router.HandleFunc("/auth", authHandler).Methods("GET")
