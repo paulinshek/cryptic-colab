@@ -1,0 +1,9 @@
+# Ignore everything:
+*
+
+# Except for:
+!bin/application
+!web/build/
+!web/build/static/
+!web/build/static/css/
+!web/build/static/js/
