@@ -20,6 +20,9 @@ vendor/*
 /web/.pnp
 /web/.pnp.js
 
+# local environment variables
+/web/.env
+
 # testing
 /web/coverage
 

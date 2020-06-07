@@ -22,6 +22,15 @@ README.md
 
 ## Build and Run
 
+When running for the first time, do
+
+```
+cd web && yarn build
+```
+
+This generates the static site in `./web/build` which is then served by the Go server when you run `make build && make run`.
+
+
 ### Make commands
 
 - `make clean` - cleans the project
@@ -29,3 +38,11 @@ README.md
 - `make run` - runs the project
 
 Then navigate to localhost:8080
+
+### Front end development
+
+```
+yarn start
+```
+
+More information in [front end specific README](web/README.md)

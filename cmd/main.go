@@ -13,25 +13,26 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
+	"github.com/paulinshek/cryptic-colab/internal/pkg/web"
 )
 
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome home!")
-}
-
 func init() {
+	log.Print("Initialising")
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
 }
 
 func main() {
+	log.Print("Starting main")
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
 
-	router.HandleFunc("/getcrossword/{id}", getCrossword).Methods("GET")
-	router.HandleFunc("/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
+	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
+
+	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
+	router.PathPrefix("/").Handler(webApp)
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
 	originsOk := handlers.AllowedOrigins([]string{os.Getenv("ROUTER_ALLOWED_ORIGINS")})
