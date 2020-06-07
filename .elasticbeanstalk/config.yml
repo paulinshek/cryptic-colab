@@ -1,5 +1,5 @@
 branch-defaults:
-  setup-continuous-deployment:
+  master:
     environment: CrypticColab-env
 environment-defaults:
   CrypticColab-env:
