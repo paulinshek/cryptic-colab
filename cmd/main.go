@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 
 	"github.com/gorilla/handlers"
@@ -14,6 +13,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
+	"github.com/paulinshek/cryptic-colab/internal/pkg/web"
 )
 
 func init() {
@@ -21,32 +21,6 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
 	}
-}
-
-type webHandler struct {
-	staticPath string
-	indexPath  string
-}
-
-func (h webHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path, err := filepath.Abs(r.URL.Path)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	path = filepath.Join(h.staticPath, path)
-
-	_, err = os.Stat(path)
-	if os.IsNotExist(err) {
-		http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
-		return
-	} else if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
 }
 
 func main() {
@@ -57,7 +31,7 @@ func main() {
 	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
 	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
 
-	webApp := webHandler{staticPath: "web/build", indexPath: "index.html"}
+	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
 	router.PathPrefix("/").Handler(webApp)
 
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
