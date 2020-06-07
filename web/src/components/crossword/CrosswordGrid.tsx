@@ -2,14 +2,14 @@ import React, { FunctionComponent, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import crosswordGridService from "../../services/crosswordGridService";
-import { Crossword, GridSquare } from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 import CrosswordGridSquare from "./CrosswordGridSquare";
 
 type Props = {
-  crossword: Crossword;
+  crossword: CrosswordTypes.Crossword;
 };
 
-const renderGridRow = (gridRow: GridSquare[], key: any): JSX.Element => {
+const renderGridRow = (gridRow: CrosswordTypes.GridSquare[], key: any): JSX.Element => {
   return (
     <div key={key} className="crossword-grid-row">
       {gridRow.map((gridSquare, index) => renderGridSquare(gridSquare, index))}
@@ -17,7 +17,7 @@ const renderGridRow = (gridRow: GridSquare[], key: any): JSX.Element => {
   );
 };
 
-const renderGridSquare = (gridSquare: GridSquare, key: any): JSX.Element => {
+const renderGridSquare = (gridSquare: CrosswordTypes.GridSquare, key: any): JSX.Element => {
   return (
     <CrosswordGridSquare
       isInput={gridSquare.isInput}
@@ -30,7 +30,7 @@ const renderGridSquare = (gridSquare: GridSquare, key: any): JSX.Element => {
 const CrosswordGrid: FunctionComponent<Props> = ({
   crossword,
 }): JSX.Element => {
-  const [grid, setGrid] = useState<GridSquare[][]>([]);
+  const [grid, setGrid] = useState<CrosswordTypes.GridSquare[][]>([]);
 
   useEffect(() => {
     setGrid(crosswordGridService.deriveGrid(crossword));

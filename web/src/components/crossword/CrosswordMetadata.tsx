@@ -6,10 +6,10 @@ import React, {
 } from "react";
 import { useSelector } from "react-redux";
 
-import { Crossword } from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 
 type Props = {
-  crossword: Crossword;
+  crossword: CrosswordTypes.Crossword;
 };
 
 const CrosswordMetadata: FunctionComponent<Props> = ({

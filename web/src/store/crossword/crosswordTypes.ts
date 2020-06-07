@@ -2,7 +2,7 @@ export interface CrosswordState {
   crosswords: Crossword[];
 }
 
-export enum CrosswordActionTypes {
+ export enum CrosswordActionTypes {
   REQUEST_GET_CROSSWORD = "crossword/REQUEST_GET_CROSSWORD",
   GET_CROSSWORD_SUCCESS = "crossword/GET_CROSSWORD_SUCCESS",
   GET_CROSSWORD_FAILURE = "crossword/GET_CROSSWORD_FAILURE",
@@ -36,7 +36,8 @@ export interface GridSquare {
   clueNumber: number | null;
 }
 
-export interface Coordinate {
+ export interface Coordinate {
   X: number;
   Y: number;
 }
+

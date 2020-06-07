@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
 import { useSelector } from "react-redux";
 
-import { CrosswordClue as CrosswordClueType } from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 
 type Props = {
-  clue: CrosswordClueType;
+  clue: CrosswordTypes.CrosswordClue;
 };
 
 const CrosswordClue: FunctionComponent<Props> = ({ clue }): JSX.Element => {

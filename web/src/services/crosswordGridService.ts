@@ -1,19 +1,13 @@
 import { equals } from "ramda";
 
-import {
-  Crossword,
-  GridSquare,
-  CrosswordClue,
-  Coordinate,
-  ClueDirection,
-} from "../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../store/crossword/crosswordTypes";
 
 export default class crosswordGridService {
-  static deriveGrid(crossword: Crossword): GridSquare[][] {
-    const grid: GridSquare[][] = [];
+  static deriveGrid(crossword: CrosswordTypes.Crossword): CrosswordTypes.GridSquare[][] {
+    const grid: CrosswordTypes.GridSquare[][] = [];
 
     for (let i = 0; i < crossword.Height; i++) {
-      const gridRow: GridSquare[] = [];
+      const gridRow: CrosswordTypes.GridSquare[] = [];
       for (let j = 0; j < crossword.Width; j++) {
         const coordinate = { X: j, Y: i };
 
@@ -36,8 +30,8 @@ export default class crosswordGridService {
   }
 
   static getClueNumberAtCoordinate(
-    clues: CrosswordClue[],
-    coordinate: Coordinate
+    clues: CrosswordTypes.CrosswordClue[],
+    coordinate: CrosswordTypes.Coordinate
   ): number | null {
     for (let i = 0; i < clues.length; i++) {
       const clue = clues[i];
@@ -50,14 +44,14 @@ export default class crosswordGridService {
   }
 
   static getIsInputAtCoordinate(
-    clues: CrosswordClue[],
-    coordinate: Coordinate
+    clues: CrosswordTypes.CrosswordClue[],
+    coordinate: CrosswordTypes.Coordinate
   ): boolean {
     for (let i = 0; i < clues.length; i++) {
       const clue = clues[i];
       if (equals(clue.StartCoordinate, coordinate)) {
         return true;
-      } else if (clue.Direction === ClueDirection.ACROSS) {
+      } else if (clue.Direction === CrosswordTypes.ClueDirection.ACROSS) {
         if (
           coordinate.Y == clue.StartCoordinate.Y &&
           coordinate.X >= clue.StartCoordinate.X &&

@@ -8,20 +8,15 @@ import { requestGetCrossword } from "./../../store/crossword/crosswordActions";
 import CrosswordMetaData from "./CrosswordMetadata";
 import CrosswordGrid from "./CrosswordGrid";
 import CrosswordClueList from "./CrosswordClueList";
-
-import {
-  Crossword as CrosswordType,
-  CrosswordClue,
-  ClueDirection,
-} from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 
 type Props = {
   crosswordId: number;
 };
 
 const renderClueList = (
-  clueDirection: ClueDirection,
-  clues: CrosswordClue[]
+  clueDirection: CrosswordTypes.ClueDirection,
+  clues: CrosswordTypes.CrosswordClue[]
 ): JSX.Element | null => {
   const filteredClues = filter(
     (clue) => clue.Direction === clueDirection,
@@ -29,7 +24,7 @@ const renderClueList = (
   );
 
   if (filteredClues.length > 0) {
-    const title = clueDirection === ClueDirection.ACROSS ? "Across" : "Down";
+    const title = clueDirection === CrosswordTypes.ClueDirection.ACROSS ? "Across" : "Down";
     return <CrosswordClueList clues={filteredClues} title={title} />;
   } else {
     return null;
@@ -39,9 +34,9 @@ const renderClueList = (
 const Crossword: FunctionComponent<Props> = ({ crosswordId }): JSX.Element => {
   const dispatch = useDispatch();
 
-  const crossword: CrosswordType | undefined = useSelector(
+  const crossword: CrosswordTypes.Crossword| undefined = useSelector(
     (state: RootState) => {
-      return find<CrosswordType>(propEq("Id", crosswordId))(
+      return find<CrosswordTypes.Crossword>(propEq("Id", crosswordId))(
         state.crossword.crosswords
       );
     }
@@ -60,8 +55,8 @@ const Crossword: FunctionComponent<Props> = ({ crosswordId }): JSX.Element => {
           </div>
           <div className="crossword-body-container">
             <CrosswordGrid crossword={crossword} />
-            {renderClueList(ClueDirection.ACROSS, crossword.Clues)}
-            {renderClueList(ClueDirection.DOWN, crossword.Clues)}
+            {renderClueList(CrosswordTypes.ClueDirection.ACROSS, crossword.Clues)}
+            {renderClueList(CrosswordTypes.ClueDirection.DOWN, crossword.Clues)}
           </div>
         </div>
       ) : (
