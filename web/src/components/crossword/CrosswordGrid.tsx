@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 
 import crosswordGridService from "../../services/crosswordGridService";
 import { Crossword, GridSquare } from "./../../store/crossword/crosswordTypes";

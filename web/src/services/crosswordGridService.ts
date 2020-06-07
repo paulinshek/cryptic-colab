@@ -59,7 +59,7 @@ export default class crosswordGridService {
         return true;
       } else if (clue.Direction === ClueDirection.ACROSS) {
         if (
-          coordinate.Y == clue.StartCoordinate.Y &&
+          coordinate.Y === clue.StartCoordinate.Y &&
           coordinate.X >= clue.StartCoordinate.X &&
           coordinate.X <= clue.StartCoordinate.X + clue.Length - 1
         ) {
@@ -67,7 +67,7 @@ export default class crosswordGridService {
         }
       } else {
         if (
-          coordinate.X == clue.StartCoordinate.X &&
+          coordinate.X === clue.StartCoordinate.X &&
           coordinate.Y >= clue.StartCoordinate.Y &&
           coordinate.Y <= clue.StartCoordinate.Y + clue.Length - 1
         ) {
