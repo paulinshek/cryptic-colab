@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react";
-import { useSelector } from "react-redux";
 
 import { CrosswordClue as CrosswordClueType } from "./../../store/crossword/crosswordTypes";
 

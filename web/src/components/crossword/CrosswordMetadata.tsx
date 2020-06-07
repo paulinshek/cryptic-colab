@@ -1,10 +1,6 @@
 import React, {
   FunctionComponent,
-  useEffect,
-  useState,
-  useCallback,
 } from "react";
-import { useSelector } from "react-redux";
 
 import { Crossword } from "./../../store/crossword/crosswordTypes";
 
