@@ -15,11 +15,11 @@ function* getCrossword(
   >
 ) {
   const url =
-    process.env.REACT_APP_API_URL +
-    "getcrossword/" +
+    "/api/getcrossword/" +
     action.payload.crosswordId;
 
   try {
+    console.log(url);
     const response = yield call(() => axios.get(url));
     console.log(response.data);
     yield put(getCrosswordSuccess(response.data));
