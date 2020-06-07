@@ -17,7 +17,7 @@ buildaws:
 	@echo "Building $(GOFILES) to $(GOPATH)/application"
 	@echo "GOPATH $(GOPATH)"
 	@GOBIN=$(GOBIN) GOARCH=amd64 GOOS=linux go build -mod=mod -o bin/application $(GOFILES) 
-	@cd web && yarn build
+	@cd web && yarn install && yarn build
 
 # get:
 #   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get .
