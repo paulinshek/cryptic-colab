@@ -45,4 +45,4 @@ Then navigate to localhost:8080
 yarn start
 ```
 
-More information in [front end specific README(web/README.md)
+More information in [front end specific README](web/README.md)
