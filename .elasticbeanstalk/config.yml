@@ -1,0 +1,19 @@
+branch-defaults:
+  setup-continuous-deployment:
+    environment: CrypticColab-env
+environment-defaults:
+  CrypticColab-env:
+    branch: null
+    repository: null
+global:
+  application_name: cryptic-colab
+  default_ec2_keyname: null
+  default_platform: Go 1 running on 64bit Amazon Linux 2
+  default_region: eu-west-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: paulin-personal
+  sc: git
+  workspace_type: Application
