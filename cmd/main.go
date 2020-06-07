@@ -47,7 +47,7 @@ func init() {
 	}
 
 	store.Options = &sessions.Options{
-		Domain:   "localhost/",
+		// Domain:   "localhost/",
 		Path:     "/",
 		MaxAge:   3600 * 8, // 8 hours
 		HttpOnly: true,
@@ -63,7 +63,7 @@ func main() {
 	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
 	router.HandleFunc("/api/getauthenticationurl", getAuthenticationUrl).Methods("GET")
 
-	router.HandleFunc("/auth", authHandler).Methods("GET")
+	router.HandleFunc("/api/authenticate", authenticate).Methods("GET")
 
 	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
 	router.PathPrefix("/").Handler(webApp)
@@ -120,48 +120,75 @@ func randToken() string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func authHandler(writer http.ResponseWriter, request *http.Request) {
+func authenticate(writer http.ResponseWriter, request *http.Request) {
+
+	log.Println("authenticating")
 
 	query := request.URL.Query()
 
 	session, _ := store.Get(request, "auth-name")
 	flashes := session.Flashes()
+
+	fmt.Printf("%+v\n", session)
+	//fmt.Printf("%+v\n", flashes)
+
+	if len(flashes) == 0 {
+		respond.With(writer, request, http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
+		return
+	}
+
 	state := flashes[0].(string)
 
 	if state != query["state"][0] {
-		//c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
+		log.Println("invalid session state")
+		log.Println(query["state"][0])
+		log.Println(state)
+		log.Println(state == query["state"][0])
+		respond.With(writer, request, http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
 		return
 	}
 
 	token, err := conf.Exchange(oauth2.NoContext, query["code"][0])
 	if err != nil {
-		//c.AbortWithError(http.StatusBadRequest, err)
+		log.Println(err.Error())
+		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	client := conf.Client(oauth2.NoContext, token)
 	email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
-		//c.AbortWithError(http.StatusBadRequest, err)
+		log.Println(err.Error())
+		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
-	log.Println("Email body: ", string(data))
-	//c.Status(http.StatusOK)
+	// log.Println("Email body: ", string(data))
+	fmt.Printf("%+v\n", email.Body)
+	fmt.Printf("%+v\n", data)
+	//respond.With(writer, request, http.StatusOK, data.Email)
 	return
 }
 
 func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
-	state = randToken()
+
+	query := request.URL.Query()
+	redirectUrl := query["redirectUrl"][0]
+
+	state := randToken()
 	session, _ := store.Get(request, "auth-name")
 	session.Flashes()
 	session.AddFlash(state)
+	session.Values["test"] = "test"
 	err := session.Save(request, writer)
+
+	fmt.Printf("%+v\n", session)
 	if err != nil {
-		respond.With(writer, request, http.StatusOK, err.Error())
-	else {
+		respond.With(writer, request, http.StatusInternalServerError, err.Error())
+	} else {
+		conf.RedirectURL = redirectUrl
 		authenticationUrl := conf.AuthCodeURL(state)
 		respond.With(writer, request, http.StatusOK, authenticationUrl)
 	}

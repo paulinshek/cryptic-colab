@@ -15,12 +15,19 @@ const AuthenticateButton: FunctionComponent = (): JSX.Element => {
       );
 
   useEffect(() => {
+      console.log(authenticationUrl)
+
       if(!authenticationUrl) {
         dispatch(requestGetAuthenticationUrl())
       }
   }, [dispatch, authenticationUrl])
 
-  return <p>authenticate button here</p>
+  if (authenticationUrl) {
+    return <a href={authenticationUrl}><button>authenticate with Google</button></a>
+  }
+  else {
+    return <div/>
+  }
 };
 
 export default AuthenticateButton;

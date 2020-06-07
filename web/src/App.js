@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import ViewCrosswordScene from "./scenes/ViewCrosswordScene";
+import AuthenticateScene from "./scenes/AuthenticateScene";
 import HeaderBar from "./components/HeaderBar";
 
 export default function App() {
@@ -15,6 +16,10 @@ export default function App() {
           <Route
             path="/crossword/:crosswordId"
             render={(props) => <ViewCrosswordScene {...props} />}
+          />
+          <Route
+            path="/authenticate"
+            render={(props) => <AuthenticateScene {...props} />}
           />
           <Route path="/">
             <Home />
