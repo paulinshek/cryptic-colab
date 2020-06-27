@@ -19,7 +19,6 @@ function* getCrossword(
     action.payload.crosswordId;
 
   try {
-    console.log(url);
     const response = yield call(() => axios.get(url));
     yield put(getCrosswordSuccess(response.data));
   } catch (error) {

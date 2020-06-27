@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 
@@ -40,7 +41,8 @@ func init() {
 			ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
 			RedirectURL:  "http://127.0.0.1:8080/auth",
 			Scopes: []string{
-				"https://www.googleapis.com/auth/userinfo.email", // You have to select your own scope from here -> https://developers.google.com/identity/protocols/googlescopes#google_sign-in
+				"https://www.googleapis.com/auth/userinfo.profile",
+				"https://www.googleapis.com/auth/userinfo.email",
 			},
 			Endpoint: google.Endpoint,
 		}
@@ -129,27 +131,26 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 	session, _ := store.Get(request, "auth-name")
 	flashes := session.Flashes()
 
-	fmt.Printf("%+v\n", session)
-	//fmt.Printf("%+v\n", flashes)
-
 	if len(flashes) == 0 {
 		respond.With(writer, request, http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
 		return
 	}
 
-	state := flashes[0].(string)
+	state := flashes[0].(string) //url.QueryEscape(flashes[0].(string))
+	queryState := url.QueryEscape(query["state"][0])
 
-	if state != query["state"][0] {
+	if state != queryState {
 		log.Println("invalid session state")
-		log.Println(query["state"][0])
+		log.Println(queryState)
 		log.Println(state)
-		log.Println(state == query["state"][0])
+		log.Println(state == queryState)
 		respond.With(writer, request, http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
 		return
 	}
 
 	token, err := conf.Exchange(oauth2.NoContext, query["code"][0])
 	if err != nil {
+		log.Println("error getting token")
 		log.Println(err.Error())
 		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
@@ -158,6 +159,7 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 	client := conf.Client(oauth2.NoContext, token)
 	email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
+		log.Println("error getting email")
 		log.Println(err.Error())
 		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
@@ -165,6 +167,8 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
+
+	log.Println("successful auth")
 	// log.Println("Email body: ", string(data))
 	fmt.Printf("%+v\n", email.Body)
 	fmt.Printf("%+v\n", data)
@@ -177,11 +181,10 @@ func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
 	query := request.URL.Query()
 	redirectUrl := query["redirectUrl"][0]
 
-	state := randToken()
+	state := url.QueryEscape(randToken())
 	session, _ := store.Get(request, "auth-name")
 	session.Flashes()
 	session.AddFlash(state)
-	session.Values["test"] = "test"
 	err := session.Save(request, writer)
 
 	fmt.Printf("%+v\n", session)

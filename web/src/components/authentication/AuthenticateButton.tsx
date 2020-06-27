@@ -1,8 +1,8 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {RootState} from "../../store/rootTypes"
-import {requestGetAuthenticationUrl} from "./../../store/authentication/authenticationActions"
+import {requestVisitAuthenticationUrl, authenticateFailure} from "./../../store/authentication/authenticationActions"
 
 
 
@@ -10,24 +10,9 @@ const AuthenticateButton: FunctionComponent = (): JSX.Element => {
 
   const dispatch = useDispatch();
 
-    const authenticationUrl:string | null = useSelector(
-        (state: RootState) => state.authentication.authenticationUrl
-      );
+  const handleOnClick = useCallback(() => dispatch(requestVisitAuthenticationUrl()), [dispatch])
 
-  useEffect(() => {
-      console.log(authenticationUrl)
-
-      if(!authenticationUrl) {
-        dispatch(requestGetAuthenticationUrl())
-      }
-  }, [dispatch, authenticationUrl])
-
-  if (authenticationUrl) {
-    return <a href={authenticationUrl}><button>authenticate with Google</button></a>
-  }
-  else {
-    return <div/>
-  }
+  return <button onClick={handleOnClick}>authenticate with Google</button>
 };
 
 export default AuthenticateButton;

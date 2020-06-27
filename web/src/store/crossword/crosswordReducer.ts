@@ -21,7 +21,6 @@ const crosswordReducer: Reducer<CrosswordTypes.CrosswordState> = (
       state.crosswords = [...crosswords, action.payload.crossword];
       return state;
     case CrosswordTypes.CrosswordActionTypes.GET_CROSSWORD_FAILURE:
-      console.log(action);
       return state;
     default:
       return state;
