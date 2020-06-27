@@ -112,7 +112,7 @@ type User struct {
 	Profile       string `json:"profile"`
 	Picture       string `json:"picture"`
 	Email         string `json:"email"`
-	EmailVerified string `json:"email_verified"`
+	EmailVerified bool `json:"email_verified"`
 	Gender        string `json:"gender"`
 }
 
@@ -124,8 +124,6 @@ func randToken() string {
 
 func authenticate(writer http.ResponseWriter, request *http.Request) {
 
-	log.Println("authenticating")
-
 	query := request.URL.Query()
 
 	session, _ := store.Get(request, "auth-name")
@@ -136,22 +134,16 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	state := flashes[0].(string) //url.QueryEscape(flashes[0].(string))
+	state := flashes[0].(string)
 	queryState := url.QueryEscape(query["state"][0])
 
 	if state != queryState {
-		log.Println("invalid session state")
-		log.Println(queryState)
-		log.Println(state)
-		log.Println(state == queryState)
 		respond.With(writer, request, http.StatusUnauthorized, fmt.Errorf("Invalid session state: %s", state))
 		return
 	}
 
 	token, err := conf.Exchange(oauth2.NoContext, query["code"][0])
 	if err != nil {
-		log.Println("error getting token")
-		log.Println(err.Error())
 		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -159,8 +151,6 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 	client := conf.Client(oauth2.NoContext, token)
 	email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
-		log.Println("error getting email")
-		log.Println(err.Error())
 		respond.With(writer, request, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -168,11 +158,21 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
 
-	log.Println("successful auth")
-	// log.Println("Email body: ", string(data))
-	fmt.Printf("%+v\n", email.Body)
-	fmt.Printf("%+v\n", data)
-	//respond.With(writer, request, http.StatusOK, data.Email)
+	user := &User{}
+	err = json.Unmarshal(data, user)
+	
+	if err != nil {
+		respond.With(writer, request, http.StatusInternalServerError, fmt.Errorf("User exists but info could not be retrieved"))
+		return
+	}
+
+	session.Values["current-user"] = data;
+	err = session.Save(request, writer)
+	if err != nil {
+		respond.With(writer, request, http.StatusInternalServerError, err.Error())
+	}
+
+	respond.With(writer, request, http.StatusOK, user)
 	return
 }
 
@@ -187,7 +187,6 @@ func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
 	session.AddFlash(state)
 	err := session.Save(request, writer)
 
-	fmt.Printf("%+v\n", session)
 	if err != nil {
 		respond.With(writer, request, http.StatusInternalServerError, err.Error())
 	} else {

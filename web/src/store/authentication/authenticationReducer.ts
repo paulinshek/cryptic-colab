@@ -15,19 +15,16 @@ const authenticationReducer: Reducer<AuthenticationTypes.AuthenticationState> = 
   state = initialState,
   action
 ) => {
-  console.log(action.type, state)
 
   switch (action.type) {
     
     case AuthenticationTypes.AuthenticationActionTypes.REQUEST_AUTHENTICATE:
       state.isAuthenticationInProgress = true;
     case AuthenticationTypes.AuthenticationActionTypes.AUTHENTICATE_FAILURE:
-      state.authenticationUrl = null;
       state.isAuthenticated = false;
       state.isAuthenticationInProgress = false;
       return state;
     case AuthenticationTypes.AuthenticationActionTypes.AUTHENTICATE_SUCCESS:
-      state.authenticationUrl = null;
       state.isAuthenticated = true;
       state.isAuthenticationInProgress = false;
       return state;

@@ -27,6 +27,7 @@ function* authenticate (action: PayloadAction<AuthenticationTypes.Authentication
 
     try {
         const response = yield call(() => axios.get(url));
+        console.log(response.data)
         yield put(authenticateSuccess());
       } catch (error) {
         yield put(authenticateFailure(error));
