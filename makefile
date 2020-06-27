@@ -14,10 +14,10 @@ build:
 	@GOBIN=$(GOBIN) go build -mod=mod -o bin/$(GONAME) $(GOFILES) 
 
 buildaws:
+	@echo "Building $(GOFILES) to $(GOPATH)/application"
+	@echo "GOPATH $(GOPATH)"
 	@GOBIN=$(GOBIN) GOARCH=amd64 GOOS=linux go build -mod=mod -o bin/application $(GOFILES) 
-	@cd web && yarn build
-	@-rm bin/ebUpload.zip
-	@zip -r bin/ebUpload.zip bin/application web/build
+	@cd web && yarn install && yarn build
 
 # get:
 #   @GOPATH=$(GOPATH) GOBIN=$(GOBIN) go get .
