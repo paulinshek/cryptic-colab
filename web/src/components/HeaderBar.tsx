@@ -6,7 +6,6 @@ import {Link} from "react-router-dom"
 import {RootState} from "../store/rootTypes"
 import AuthenticationControl from "./authentication/AuthenticationControl"
 import CurrentUserGreeting from "./CurrentUserGreeting"
-import { User } from "../store/authentication/authenticationTypes";
 
 
 const HeaderBar: FunctionComponent = (): JSX.Element => {

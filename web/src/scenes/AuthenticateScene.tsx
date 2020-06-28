@@ -22,6 +22,7 @@ const AuthenticateScene: FunctionComponent = (): JSX.Element => {
     const state = queryValues.state ? queryValues.state.toString() : ""
     const code = queryValues.code ? queryValues.code.toString() : ""
     dispatch(requestAuthenticate(state, code))
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -39,7 +40,6 @@ const AuthenticateScene: FunctionComponent = (): JSX.Element => {
   else {
     return <p>Authentication failed</p>
   }
-  return <p>this is the authentication result page</p>
 };
 
 export default AuthenticateScene;
