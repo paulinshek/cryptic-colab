@@ -1,15 +1,15 @@
 import { action } from "typesafe-actions";
 
-import { CrosswordActionTypes, Crossword } from "./crosswordTypes";
+import * as CrosswordTypes from "./crosswordTypes";
 
 export const requestGetCrossword = (crosswordId: number) => {
-  return action(CrosswordActionTypes.REQUEST_GET_CROSSWORD, { crosswordId });
+  return action(CrosswordTypes.CrosswordActionTypes.REQUEST_GET_CROSSWORD, { crosswordId });
 };
 
-export const getCrosswordSuccess = (crossword: Crossword) => {
-  return action(CrosswordActionTypes.GET_CROSSWORD_SUCCESS, { crossword });
+export const getCrosswordSuccess = (crossword: CrosswordTypes.Crossword) => {
+  return action(CrosswordTypes.CrosswordActionTypes.GET_CROSSWORD_SUCCESS, { crossword });
 };
 
 export const getCrosswordFailure = (error: Error) => {
-  return action(CrosswordActionTypes.GET_CROSSWORD_FAILURE, null, null, error);
+  return action(CrosswordTypes.CrosswordActionTypes.GET_CROSSWORD_FAILURE, null, null, error);
 };

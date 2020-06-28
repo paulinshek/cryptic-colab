@@ -2,30 +2,25 @@ import { Reducer } from "redux";
 
 import { takeWhile } from "ramda";
 
-import {
-  CrosswordState,
-  CrosswordActionTypes,
-  Crossword,
-} from "./crosswordTypes";
+import * as CrosswordTypes from "./crosswordTypes";
 
-export const initialState: CrosswordState = {
+export const initialState: CrosswordTypes.CrosswordState = {
   crosswords: [],
 };
 
-const crosswordReducer: Reducer<CrosswordState> = (
+const crosswordReducer: Reducer<CrosswordTypes.CrosswordState> = (
   state = initialState,
   action
 ) => {
   switch (action.type) {
-    case CrosswordActionTypes.GET_CROSSWORD_SUCCESS:
+    case CrosswordTypes.CrosswordActionTypes.GET_CROSSWORD_SUCCESS:
       const crosswords = takeWhile(
-        (crossword: Crossword) => crossword.Id !== action.payload.crossword.Id,
+        (crossword: CrosswordTypes.Crossword) => crossword.Id !== action.payload.crossword.Id,
         state.crosswords
       );
       state.crosswords = [...crosswords, action.payload.crossword];
       return state;
-    case CrosswordActionTypes.GET_CROSSWORD_FAILURE:
-      console.log(action);
+    case CrosswordTypes.CrosswordActionTypes.GET_CROSSWORD_FAILURE:
       return state;
     default:
       return state;

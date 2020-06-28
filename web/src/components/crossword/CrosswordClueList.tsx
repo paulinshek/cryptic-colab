@@ -2,11 +2,11 @@ import React, { FunctionComponent } from "react";
 
 import CrosswordClue from "./CrosswordClue";
 
-import { CrosswordClue as CrosswordClueType } from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 
 type Props = {
   title: string;
-  clues: CrosswordClueType[];
+  clues: CrosswordTypes.CrosswordClue[];
 };
 
 const CrosswordClueList: FunctionComponent<Props> = ({

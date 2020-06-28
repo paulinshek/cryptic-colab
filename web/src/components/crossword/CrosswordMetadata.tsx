@@ -2,10 +2,10 @@ import React, {
   FunctionComponent,
 } from "react";
 
-import { Crossword } from "./../../store/crossword/crosswordTypes";
+import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
 
 type Props = {
-  crossword: Crossword;
+  crossword: CrosswordTypes.Crossword;
 };
 
 const CrosswordMetadata: FunctionComponent<Props> = ({
