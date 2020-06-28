@@ -56,3 +56,15 @@
 .button-blue:hover {
   @apply bg-blue-700;
 }
+
+.header-bar {
+  @apply flex;
+
+  width: 100%;
+}
+
+.header-bar nav {
+  @apply flex;
+
+  width: 100%;
+}

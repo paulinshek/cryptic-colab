@@ -1,12 +1,21 @@
 import React, { FunctionComponent } from "react";
+import {useSelector} from "react-redux"
 
 import {Link} from "react-router-dom"
 
+import {RootState} from "../store/rootTypes"
 import AuthenticationControl from "./authentication/AuthenticationControl"
+import CurrentUserGreeting from "./CurrentUserGreeting"
+import { User } from "../store/authentication/authenticationTypes";
 
 
 const HeaderBar: FunctionComponent = (): JSX.Element => {
-return (<div>
+
+  const isAuthenticated:boolean = useSelector(
+    (state: RootState) => state.authentication.isAuthenticated
+  );
+
+return (<div className="header-bar">
     <nav>
     <ul>
       <li>
@@ -17,6 +26,7 @@ return (<div>
       </li>
     </ul>
   </nav>
+    {isAuthenticated && <CurrentUserGreeting/>}
   <AuthenticationControl/>
   </div>
 )

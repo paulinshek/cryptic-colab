@@ -13,8 +13,6 @@ const authenticationReducer: Reducer<AuthenticationTypes.AuthenticationState> = 
   action
 ) => {
 
-  console.log(action)
-
   switch (action.type) {
     case AuthenticationTypes.AuthenticationActionTypes.REQUEST_AUTHENTICATE:
       return {

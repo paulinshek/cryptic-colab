@@ -17929,6 +17929,16 @@ video {
   background-color: rgba(43, 108, 176, var(--bg-opacity));
 }
 
+.header-bar {
+  display: flex;
+  width: 100%;
+}
+
+.header-bar nav {
+  display: flex;
+  width: 100%;
+}
+
 @media (min-width: 640px) {
   .sm\:space-y-0 > :not(template) ~ :not(template) {
     --space-y-reverse: 0;

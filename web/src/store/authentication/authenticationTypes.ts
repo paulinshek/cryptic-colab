@@ -18,12 +18,12 @@ export interface AuthenticationState {
   }
 
 export interface User {
-	Name: string;
-	GivenName: string;
-	FamilyName: string;
-	Profile: string;
-	Picture: string;
-	Email: string;
-	EmailVerified: boolean;
-	Gender: string;
+	name: string;
+	given_name: string;
+	family_name: string;
+	profile: string;
+	picture: string;
+	email: string;
+	email_verified: boolean;
+	gender: string;
 }
