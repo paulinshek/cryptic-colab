@@ -10,7 +10,11 @@ export interface AuthenticationState {
 	REQUEST_AUTHENTICATE = "authentication/REQUEST_AUTHENTICATE",
 	AUTHENTICATE_SUCCESS = "authentication/AUTHENTICATE_SUCCESS",
 	AUTHENTICATE_FAILURE = "authentication/AUTHENTICATE_FAILURE",
-	REQUEST_UNAUTHENTICATE = "authentication/REQUEST_UNAUTHENTICATE"
+	REQUEST_UNAUTHENTICATE = "authentication/REQUEST_UNAUTHENTICATE",
+	UNAUTHENTICATE_SUCCESS = "authentication/UNAUTHENTICATE_SUCCESS",
+	REQUEST_GET_AUTHENTICATED_USER = "authentication/REQUEST_GET_AUTHENTICATED_USER",
+	GET_AUTHENTICATED_USER_SUCCESS = "authentication/GET_AUTHENTICATED_USER_SUCCESS",
+	GET_AUTHENTICATED_USER_FAILURE = "authentication/GET_AUTHENTICATED_USER_FAILURE",
   }
 
 export interface User {
@@ -20,6 +24,6 @@ export interface User {
 	Profile: string;
 	Picture: string;
 	Email: string;
-	EmailVerified: string;
+	EmailVerified: boolean;
 	Gender: string;
 }

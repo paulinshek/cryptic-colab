@@ -1,7 +1,7 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import {useDispatch, useSelector} from "react-redux"
 
-import queryString, { stringify } from 'query-string'
+import queryString from 'query-string'
 
 import {RootState} from "../store/rootTypes"
 import {requestAuthenticate} from "./../store/authentication/authenticationActions"
@@ -24,6 +24,11 @@ const AuthenticateScene: FunctionComponent = (): JSX.Element => {
     dispatch(requestAuthenticate(state, code))
   }, [])
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.location.href = "/";
+    }
+  }, [isAuthenticated])
 
   if (isAuthenticationInProgress) {
     return <p>Authenticating</p>

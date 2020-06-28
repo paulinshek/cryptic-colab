@@ -1,7 +1,5 @@
 import React, { FunctionComponent } from "react";
 
-import * as CrosswordTypes from "./../../store/crossword/crosswordTypes";
-
 type Props = {
   isInput: boolean;
   clueNumber: number | null;

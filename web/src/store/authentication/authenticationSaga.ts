@@ -1,10 +1,16 @@
-import { takeLatest, call, put } from "redux-saga/effects";
+import { takeLatest, takeLeading, call, put } from "redux-saga/effects";
 
-import { Action, PayloadAction } from "typesafe-actions";
+import { PayloadAction } from "typesafe-actions";
 import axios from "axios";
 
 import * as AuthenticationTypes from "./authenticationTypes";
-import {  visitAuthenticationUrlFailure, authenticateFailure, authenticateSuccess } from "./authenticationActions";
+import {  
+  visitAuthenticationUrlFailure, 
+  authenticateFailure, 
+  authenticateSuccess, 
+  getAuthenticatedUserSuccess, 
+  getAuthenticatedUserFailure,
+  unauthenticateSuccess } from "./authenticationActions";
 
 function* getAuthenticationUrl() {
 
@@ -27,14 +33,38 @@ function* authenticate (action: PayloadAction<AuthenticationTypes.Authentication
 
     try {
         const response = yield call(() => axios.get(url));
-        console.log(response.data)
-        yield put(authenticateSuccess());
+        yield put(authenticateSuccess(response.data));
       } catch (error) {
         yield put(authenticateFailure(error));
       }
 }
 
+function* unauthenticate () {
+  const url =
+    `/api/unauthenticate`
+
+    try {
+      yield call(() => axios.get(url));
+      yield put(unauthenticateSuccess());
+    } catch (error) {
+    }
+}
+
+function* getAuthenticatedUser () {
+  const url =
+    `/api/getauthenticateduser`
+
+    try {
+        const response = yield call(() => axios.get(url));
+        yield put(getAuthenticatedUserSuccess(response.data));
+      } catch (error) {
+        yield put(getAuthenticatedUserFailure(error));
+      }
+}
+
 export default function* () {
+  yield takeLeading(AuthenticationTypes.AuthenticationActionTypes.REQUEST_GET_AUTHENTICATED_USER, getAuthenticatedUser)
   yield takeLatest(AuthenticationTypes.AuthenticationActionTypes.REQUEST_VISIT_AUTHENTICATION_URL, getAuthenticationUrl);
   yield takeLatest(AuthenticationTypes.AuthenticationActionTypes.REQUEST_AUTHENTICATE, authenticate);
+  yield takeLatest(AuthenticationTypes.AuthenticationActionTypes.REQUEST_UNAUTHENTICATE, unauthenticate);
 }

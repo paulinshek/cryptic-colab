@@ -1,12 +1,10 @@
-import { Store, createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import { History } from "history";
 
-import { RootState } from "./store/rootTypes";
 import rootReducer from "./store/rootReducer";
 import rootSaga from "./store/rootSaga";
 

@@ -8,6 +8,7 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
 import configureStore from "./configureStore";
+import {requestGetAuthenticatedUser} from "./store/authentication/authenticationActions"
 
 import "./styles/tailwind.css";
 
@@ -15,6 +16,8 @@ const history = createBrowserHistory();
 
 const initialState = window.INITIAL_REDUX_STATE;
 const {store, persistor} = configureStore(history, initialState);
+
+store.dispatch(requestGetAuthenticatedUser());
 
 ReactDOM.render(
   <Provider store={store}>

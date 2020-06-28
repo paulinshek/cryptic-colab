@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -22,6 +23,7 @@ import (
 
 	"github.com/paulinshek/cryptic-colab/internal/pkg/dataaccess"
 	"github.com/paulinshek/cryptic-colab/internal/pkg/web"
+	"github.com/paulinshek/cryptic-colab/internal/pkg/core"
 )
 
 var conf *oauth2.Config
@@ -54,6 +56,8 @@ func init() {
 		MaxAge:   3600 * 8, // 8 hours
 		HttpOnly: true,
 	}
+
+	gob.Register(&core.User{})
 }
 
 func main() {
@@ -63,9 +67,11 @@ func main() {
 
 	router.HandleFunc("/api/getcrossword/{id}", getCrossword).Methods("GET")
 	router.HandleFunc("/api/getcrosswordgrid", getCrosswordGrid).Methods("GET")
-	router.HandleFunc("/api/getauthenticationurl", getAuthenticationUrl).Methods("GET")
 
+	router.HandleFunc("/api/getauthenticationurl", getAuthenticationUrl).Methods("GET")
 	router.HandleFunc("/api/authenticate", authenticate).Methods("GET")
+	router.HandleFunc("/api/unauthenticate", unauthenticate).Methods("GET")
+	router.HandleFunc("/api/getauthenticateduser", getAuthenticatedUser).Methods("GET")
 
 	webApp := web.FileHandler{StaticPath: "web/build", IndexPath: "index.html"}
 	router.PathPrefix("/").Handler(webApp)
@@ -103,23 +109,30 @@ func getCrosswordGrid(writer http.ResponseWriter, request *http.Request) {
 
 }
 
-// User is a retrieved and authentiacted user.
-type User struct {
-	Sub           string `json:"sub"`
-	Name          string `json:"name"`
-	GivenName     string `json:"given_name"`
-	FamilyName    string `json:"family_name"`
-	Profile       string `json:"profile"`
-	Picture       string `json:"picture"`
-	Email         string `json:"email"`
-	EmailVerified bool `json:"email_verified"`
-	Gender        string `json:"gender"`
-}
-
 func randToken() string {
 	b := make([]byte, 32)
 	rand.Read(b)
 	return base64.StdEncoding.EncodeToString(b)
+}
+
+func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
+	query := request.URL.Query()
+	redirectUrl := query["redirectUrl"][0]
+
+	state := url.QueryEscape(randToken())
+	session, _ := store.Get(request, "auth-name")
+	session.Flashes()
+	session.AddFlash(state)
+	err := session.Save(request, writer)
+
+	if err != nil {
+		respond.With(writer, request, http.StatusInternalServerError, err.Error())
+	} else {
+		conf.RedirectURL = redirectUrl
+		authenticationUrl := conf.AuthCodeURL(state)
+		respond.With(writer, request, http.StatusOK, authenticationUrl)
+	}
+	return
 }
 
 func authenticate(writer http.ResponseWriter, request *http.Request) {
@@ -158,7 +171,7 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 	defer email.Body.Close()
 	data, _ := ioutil.ReadAll(email.Body)
 
-	user := &User{}
+	user := &core.User{}
 	err = json.Unmarshal(data, user)
 	
 	if err != nil {
@@ -166,33 +179,47 @@ func authenticate(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	session.Values["current-user"] = data;
+	session.Values["current-user"] = user;
 	err = session.Save(request, writer)
 	if err != nil {
 		respond.With(writer, request, http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	respond.With(writer, request, http.StatusOK, user)
 	return
 }
 
-func getAuthenticationUrl(writer http.ResponseWriter, request *http.Request) {
-
-	query := request.URL.Query()
-	redirectUrl := query["redirectUrl"][0]
-
-	state := url.QueryEscape(randToken())
+func getAuthenticatedUser (writer http.ResponseWriter, request *http.Request) {
 	session, _ := store.Get(request, "auth-name")
-	session.Flashes()
-	session.AddFlash(state)
-	err := session.Save(request, writer)
 
+	value := session.Values["current-user"]
+
+	if value == nil {
+		respond.With(writer, request, http.StatusOK, nil)
+		return
+	}
+
+	user, ok := value.(*core.User); 
+
+    if !ok {
+        respond.With(writer, request, http.StatusInternalServerError, fmt.Errorf("User exists but info could not be read"))
+		return
+	}
+	
+	respond.With(writer, request, http.StatusOK, user)
+	return
+}
+
+func unauthenticate (writer http.ResponseWriter, request *http.Request) {
+	session, _ := store.Get(request, "auth-name")
+	session.Values["current-user"] = nil;
+	err := session.Save(request, writer)
 	if err != nil {
 		respond.With(writer, request, http.StatusInternalServerError, err.Error())
-	} else {
-		conf.RedirectURL = redirectUrl
-		authenticationUrl := conf.AuthCodeURL(state)
-		respond.With(writer, request, http.StatusOK, authenticationUrl)
+		return
 	}
+
+	respond.With(writer, request, http.StatusOK, nil)
 	return
 }

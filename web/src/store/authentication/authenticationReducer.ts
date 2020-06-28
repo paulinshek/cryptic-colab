@@ -1,9 +1,6 @@
 import { Reducer } from "redux";
 
-import { takeWhile } from "ramda";
-
 import * as AuthenticationTypes from "./authenticationTypes";
-import { authenticateFailure } from "./authenticationActions";
 
 export const initialState: AuthenticationTypes.AuthenticationState = {
   isAuthenticated: false,
@@ -16,21 +13,45 @@ const authenticationReducer: Reducer<AuthenticationTypes.AuthenticationState> = 
   action
 ) => {
 
+  console.log(action)
+
   switch (action.type) {
-    
     case AuthenticationTypes.AuthenticationActionTypes.REQUEST_AUTHENTICATE:
-      state.isAuthenticationInProgress = true;
+      return {
+        ...state, 
+        isAuthenticationInProgress: true
+      }
     case AuthenticationTypes.AuthenticationActionTypes.AUTHENTICATE_FAILURE:
-      state.isAuthenticated = false;
-      state.isAuthenticationInProgress = false;
-      return state;
+      return {
+        ...state, 
+        isAuthenticated: false, 
+        isAuthenticationInProgress: false
+      }
     case AuthenticationTypes.AuthenticationActionTypes.AUTHENTICATE_SUCCESS:
-      state.isAuthenticated = true;
-      state.isAuthenticationInProgress = false;
-      return state;
-    case AuthenticationTypes.AuthenticationActionTypes.REQUEST_UNAUTHENTICATE:
-      state.isAuthenticationInProgress = false;
-      state.isAuthenticated = false;
+      return {
+        ...state, 
+        isAuthenticated: true, 
+        isAuthenticationInProgress: false,
+        currentUser: action.payload.user
+      }
+    case AuthenticationTypes.AuthenticationActionTypes.UNAUTHENTICATE_SUCCESS:
+      return {
+        ...state, 
+        isAuthenticated: false, 
+        currentUser: null
+      }
+    case AuthenticationTypes.AuthenticationActionTypes.GET_AUTHENTICATED_USER_SUCCESS:
+      return {
+        ...state, 
+        isAuthenticated: action.payload.user != null,
+        currentUser: action.payload.user
+      } 
+    case AuthenticationTypes.AuthenticationActionTypes.GET_AUTHENTICATED_USER_FAILURE:
+      return {
+        ...state, 
+        isAuthenticated: false, 
+        currentUser: null
+      }
     default:
       return state;
   }

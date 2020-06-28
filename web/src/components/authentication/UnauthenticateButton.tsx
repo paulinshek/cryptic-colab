@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-import {RootState} from "../../store/rootTypes"
 import {requestUnauthenticate} from "./../../store/authentication/authenticationActions"
 
 
@@ -13,7 +12,7 @@ const UnauthenticateButton: FunctionComponent = (): JSX.Element => {
 
     const handleOnClick = useCallback(() => dispatch(requestUnauthenticate()), [dispatch])
 
-    return <button onClick={handleOnClick}>Log out</button>
+    return <button className="button button-blue" onClick={handleOnClick}>Log out</button>
   
 }
 
